@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WhatsApp Session Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #1ebd5a;
+        }
+
+        #qrContainer {
+            margin-top: 20px;
+        }
+
+        #qrContainer img {
+            width: 250px;
+            height: 250px;
+        }
+
+        .message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .loading {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Add WhatsApp Phone Number</h1>
+
+    <form id="addSessionForm">
+        <input 
+            type="text" 
+            id="phoneNumber" 
+            placeholder="Enter phone number (e.g. 8617609851898)" 
+            required 
+        />
+        <br>
+        <button type="submit">Add Session</button>
+    </form>
+
+    <div id="statusMessage" class="message"></div>
+    <div id="qrContainer"></div>
+</div>
+
+<script>
+    const form = document.getElementById('addSessionForm');
+    const qrContainer = document.getElementById('qrContainer');
+    const statusMessage = document.getElementById('statusMessage');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const phoneNumber = document.getElementById('phoneNumber').value.trim();
+
+        if (!phoneNumber) {
+            statusMessage.textContent = "Phone number is required.";
+            statusMessage.className = "message error";
+            return;
+        }
+
+        statusMessage.textContent = "Generating QR code... Please wait.";
+        statusMessage.className = "message loading";
+        qrContainer.innerHTML = "";
+
+        try {
+            const response = await fetch('/api/add-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ phone_number: phoneNumber })
+            });
+
+            const data = await response.json();
+
+            if (data.qr) {
+                qrContainer.innerHTML = `<img src="${data.qr}" alt="QR Code" />`;
+                statusMessage.textContent = "Scan this QR code using WhatsApp → Linked Devices.";
+                statusMessage.className = "message success";
+            } else {
+                statusMessage.textContent = data.message || "Something went wrong.";
+                statusMessage.className = "message error";
+            }
+
+        } catch (error) {
+            console.error(error);
+            statusMessage.textContent = "Server error. Please try again.";
+            statusMessage.className = "message error";
+        }
+    });
+</script>
+
+</body>
+</html>

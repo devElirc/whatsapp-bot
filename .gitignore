@@ -1,0 +1,59 @@
+# =========================
+# Node Modules
+# =========================
+node_modules/
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.local
+.env.production
+.env.development
+
+sessions/
+session/
+.auth/
+.wwebjs_auth/
+.wwebjs_cache/
+
+# =========================
+# Media Storage
+# =========================
+media/
+
+
+
+# =========================
+# Database Dumps
+# =========================
+*.sql
+*.dump
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# IDE Files
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Build / Cache
+# =========================
+dist/
+build/
+.cache/
+coverage/
+
+# =========================
+# Temporary Files
+# =========================
+tmp/
+temp/
